@@ -97,7 +97,7 @@ npm run build
       <td align="center">
         <a href="https://github.com/therevolt/"> 
           <img width="150" src="https://media-exp1.licdn.com/dms/image/C5603AQHWisyVrRhm-Q/profile-displayphoto-shrink_800_800/0/1617809629399?e=1626307200&v=beta&t=Jx9QSk3dCoVZWsdErlwIY6FuoL5tqj3vr49yTRkvoO4" alt="Rama Seftiansyah"><br/>
-          <b>Rama Seftiansyah</b>
+          <b>Rama Seftiansyah</b><br>
            <b>Backend Developer</b>
         </a>
       </td>
@@ -111,7 +111,7 @@ npm run build
       <td align="center">   
         <a href="https://github.com/heatclift77">
           <img width="150" src="https://media-exp1.licdn.com/dms/image/C5603AQFZLY_7XQ9k0A/profile-displayphoto-shrink_800_800/0/1617766337918?e=1626307200&v=beta&t=t3BBq8dehfARnHorAe1MyQyXAsJz21Ec4O6_Pmx7wSY" alt="Muhammad Aditya Pratama"><br/>
-          <b>Muhammad Aditya Pratama</b>
+          <b>Muhammad Aditya Pratama</b> 
           <b>Frontend Developer</b>
         </a>
       </td>
