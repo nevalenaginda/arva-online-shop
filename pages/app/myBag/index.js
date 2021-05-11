@@ -1,10 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addCart, deleteCart, getCart } from '../../../src/config/redux/actions/carts'
-import Rupiah from '../../../src/helper/rupiah'
-import Swal from 'sweetalert2'
-import { useRouter } from 'next/router'
-import axiosApiInstance from '../../../src/helper/axios';
+import {
+  addCart,
+  deleteCart,
+  getCart,
+} from "../../../src/config/redux/actions/carts";
+import Rupiah from "../../../src/helper/rupiah";
+import Swal from "sweetalert2";
+import { useRouter } from "next/router";
+import axiosApiInstance from "../../../src/helper/axios";
+import withAuth from "../../../src/helper/authNext";
 
 function index() {
   const router = useRouter();
@@ -13,12 +18,12 @@ function index() {
   const [state, setState] = useState(null);
   const [activeBtn, setActiveBtn] = useState(false);
   const [isSelected, setisSelected] = useState([]);
-  const [load, setLoad] = useState(true)
-  const [dataSelected, setDataSelected] = useState([])
+  const [load, setLoad] = useState(true);
+  const [dataSelected, setDataSelected] = useState([]);
 
   const handleSelected = (item) => {
-    setDataSelected([...dataSelected, item])
-    const newId = isSelected.push(String(item.id))
+    setDataSelected([...dataSelected, item]);
+    const newId = isSelected.push(String(item.id));
     // const uniqueId = [...new Set(isSelected)];
     // console.log(uniqueId);
   };
@@ -27,11 +32,11 @@ function index() {
     const uniqueId = [...new Set(isSelected)];
     console.log(uniqueId);
     const data = {
-      cartId: JSON.stringify(uniqueId)
-    }
-    axiosApiInstance.post(`${process.env.api}/v1/cart/delete`, data)
-    setLoad(true)
-    setDataSelected([])
+      cartId: JSON.stringify(uniqueId),
+    };
+    axiosApiInstance.post(`${process.env.api}/v1/cart/delete`, data);
+    setLoad(true);
+    setDataSelected([]);
     // dispatch(deleteCart(data)).then((res) => {
     //   Swal.fire("Success", res, "success");
     // }).catch((err) => {
@@ -40,36 +45,34 @@ function index() {
     // .catch((err) => {
     //   Swal.fire("Something Error!", err, "error");
     // });
-  }
-
+  };
 
   const handleAdd = (item) => {
     if (item.quantity < item.stockProduct) {
       const data = {
         productId: item.productId,
-        quantity: 1
+        quantity: 1,
       };
-      dispatch(addCart(data))
+      dispatch(addCart(data));
       setActiveBtn(true);
-      setLoad(true)
+      setLoad(true);
     } else {
-      setActiveBtn(false)
+      setActiveBtn(false);
     }
   };
 
-
   const handleRemove = (item) => {
     if (item.quantity === 0) {
-      setActiveBtn(false)
+      setActiveBtn(false);
     } else {
       if (item.quantity >= 1) {
         const data = {
           productId: item.productId,
-          quantity: -1
+          quantity: -1,
         };
-        dispatch(addCart(data))
+        dispatch(addCart(data));
         setActiveBtn(true);
-        setLoad(true)
+        setLoad(true);
       } else {
         setActiveBtn(false);
       }
@@ -77,17 +80,19 @@ function index() {
   };
 
   const handleBuy = () => {
-    dispatch({ type: "ADD_CART", payload: dataSelected })
-    router.push("/app/checkout")
-  }
+    dispatch({ type: "ADD_CART", payload: dataSelected });
+    router.push("/app/checkout");
+  };
 
   useEffect(() => {
     console.log("adadad");
     if (load) {
-      dispatch(getCart()).then(() => setLoad(false)).catch(() => {
-        setState({ dataCart: [] })
-        setLoad(false)
-      })
+      dispatch(getCart())
+        .then(() => setLoad(false))
+        .catch(() => {
+          setState({ dataCart: [] });
+          setLoad(false);
+        });
     }
   }, [handleAdd, handleRemove, handleDelete]);
 
@@ -96,13 +101,12 @@ function index() {
     if (carts.dataCart) {
       if (carts.dataCart.length > 0) {
         console.log(carts);
-        setState(carts)
+        setState(carts);
       } else {
-        setState([])
+        setState([]);
       }
     }
   }, [carts]);
-
 
   return (
     <div>
@@ -126,7 +130,10 @@ function index() {
                   <span className="text-muted ms-1 me-auto d-none d-md-block">
                     (2 items selected)
                   </span>
-                  <button className="btn text-danger fw-bold shadow-none" onClick={handleDelete}>
+                  <button
+                    className="btn text-danger fw-bold shadow-none"
+                    onClick={handleDelete}
+                  >
                     Delete
                   </button>
                 </div>
@@ -134,76 +141,85 @@ function index() {
             </div>
             {/* end selecet items */}
 
-            {state && state.dataCart.map((item, index) => {
-
-              return (
-                <>
-                  <div className="card card-shadow border-0 mb-3" key={index}>
-                    <div className="card-body">
-                      <div className="d-sm-block d-md-flex justify-content-between align-items-center">
-                        <input
-                          className="d-sm-inline-block form-check-input bg-danger border-0 rounded-0 shadow-none"
-                          type="checkbox"
-                          // value={item.id}
-                          id="flexCheckDefault"
-                          // onSelect={(item) => console.log(item)}
-                          // onChange={(item) => console.log(item.target)}
-                          onClick={() => handleSelected(item)}
-                        />
-                        <div className="d-none d-md-flex border-image ms-3">
-                          <img
-                            alt="item"
-                            src={item.imageProduct[0]}
-                            className="border-image"
+            {state &&
+              state.dataCart.map((item, index) => {
+                return (
+                  <>
+                    <div className="card card-shadow border-0 mb-3" key={index}>
+                      <div className="card-body">
+                        <div className="d-sm-block d-md-flex justify-content-between align-items-center">
+                          <input
+                            className="d-sm-inline-block form-check-input bg-danger border-0 rounded-0 shadow-none"
+                            type="checkbox"
+                            // value={item.id}
+                            id="flexCheckDefault"
+                            // onSelect={(item) => console.log(item)}
+                            // onChange={(item) => console.log(item.target)}
+                            onClick={() => handleSelected(item)}
                           />
-                        </div>
-                        <div className="d-inline-block d-md-flex ms-3  me-auto">
-                          <div className=" d-flex flex-column ">
-                            <span className="fw-bold d-inline-block text-truncate" style={{ maxWidth: "180px" }}>{item.nameProduct}</span>
-                            <span className="text-muted">{item.nameSeller}</span>
+                          <div className="d-none d-md-flex border-image ms-3">
+                            <img
+                              alt="item"
+                              src={item.imageProduct[0]}
+                              className="border-image"
+                            />
                           </div>
-                        </div>
-                        <div
-                          className="d-inline-block mt-3  mt-sm-3 mt-md-0 ms-0 ms-sm-5 ms-md-0 float-start text-center"
-                          style={{ width: "180px" }}
-                        >
-                          <button
-                            className={`btn btn-grup radius-50 shadow-none  ${activeBtn ? "" : "btn-active"
+                          <div className="d-inline-block d-md-flex ms-3  me-auto">
+                            <div className=" d-flex flex-column ">
+                              <span
+                                className="fw-bold d-inline-block text-truncate"
+                                style={{ maxWidth: "180px" }}
+                              >
+                                {item.nameProduct}
+                              </span>
+                              <span className="text-muted">
+                                {item.nameSeller}
+                              </span>
+                            </div>
+                          </div>
+                          <div
+                            className="d-inline-block mt-3  mt-sm-3 mt-md-0 ms-0 ms-sm-5 ms-md-0 float-start text-center"
+                            style={{ width: "180px" }}
+                          >
+                            <button
+                              className={`btn btn-grup radius-50 shadow-none  ${
+                                activeBtn ? "" : "btn-active"
                               }`}
-                            onClick={(e) => handleRemove(item)}
-                          >
-                            <span className="material-icons f-14 ">remove</span>
-                          </button>
-                          <p
-                            className="d-inline-block mx-3 fw-bold"
-                            style={{ width: "40px" }}
-                          >
-                            {item.quantity}
-                          </p>
-                          <button
-                            className={`btn btn-grup radius-50 text-center shadow-none  ${activeBtn ? "btn-active" : ""
+                              onClick={(e) => handleRemove(item)}
+                            >
+                              <span className="material-icons f-14 ">
+                                remove
+                              </span>
+                            </button>
+                            <p
+                              className="d-inline-block mx-3 fw-bold"
+                              style={{ width: "40px" }}
+                            >
+                              {item.quantity}
+                            </p>
+                            <button
+                              className={`btn btn-grup radius-50 text-center shadow-none  ${
+                                activeBtn ? "btn-active" : ""
                               }`}
-                            onClick={(e) => handleAdd(item)}
+                              onClick={(e) => handleAdd(item)}
+                            >
+                              <span className="material-icons f-14 fw-bold">
+                                add
+                              </span>
+                            </button>
+                          </div>
+                          <div
+                            className="d-inline-block mt-3  mt-sm-3 mt-md-0 me-0 me-sm-5 me-md-0  ms-md-5 fw-bold f-18 float-end"
+                            style={{ width: "120px" }}
                           >
-                            <span className="material-icons f-14 fw-bold">
-                              add
-                          </span>
-                          </button>
-                        </div>
-                        <div
-                          className="d-inline-block mt-3  mt-sm-3 mt-md-0 me-0 me-sm-5 me-md-0  ms-md-5 fw-bold f-18 float-end"
-                          style={{ width: "120px" }}
-                        >
-                          {Rupiah(`Rp ${item.totalPrice}`)}
+                            {Rupiah(`Rp ${item.totalPrice}`)}
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                </>
-              )
-            })}
-
-
+                  </>
+                );
+              })}
           </div>
 
           <div className="col-12 col-md-12 col-lg-4 ">
@@ -213,11 +229,20 @@ function index() {
                 <p className="fw-bold">Shopping summary</p>
                 <div className="d-flex justify-content-between">
                   <span className="text-muted">Total price</span>
-                  <span className="fw-bold f-18">{Rupiah(`Rp ${dataSelected.map((item) => item.totalPrice).reduce((a, b) => a + b, 0)}`)}</span>
+                  <span className="fw-bold f-18">
+                    {Rupiah(
+                      `Rp ${dataSelected
+                        .map((item) => item.totalPrice)
+                        .reduce((a, b) => a + b, 0)}`
+                    )}
+                  </span>
                 </div>
                 <div className="row justify-content-center">
                   <div className="col-sm-12 col-md-8 col-lg-12">
-                    <button className="mt-3 btn w-100 bg-danger round text-white shadow-none btn-hover" onClick={handleBuy}>
+                    <button
+                      className="mt-3 btn w-100 bg-danger round text-white shadow-none btn-hover"
+                      onClick={handleBuy}
+                    >
                       Buy
                     </button>
                   </div>
@@ -283,4 +308,4 @@ function index() {
   );
 }
 
-export default index;
+export default withAuth(index);

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Modal from 'react-modal'
+import Modal from "react-modal";
 import * as Yup from "yup";
 import { useFormik } from "formik";
 import { useDispatch, useSelector } from "react-redux";
@@ -8,9 +8,10 @@ import {
   getListAddressUser,
   insertAddressUser,
 } from "../../../src/config/redux/actions/users";
-import Rupiah from '../../../src/helper/rupiah'
+import Rupiah from "../../../src/helper/rupiah";
 import { ListUserAddress } from "../../../src/component/module";
-import Swal from 'sweetalert2'
+import Swal from "sweetalert2";
+import withAuth from "../../../src/helper/authNext";
 
 function Checkout() {
   const dispatch = useDispatch();
@@ -19,9 +20,9 @@ function Checkout() {
   const [state, setState] = useState({
     toggleModal: false,
     // addAdsress: false
-  })
+  });
   const [modalCheckout, setModalCheckout] = useState(false);
-  const [resultCheckout, setResultCheckout] = useState(null)
+  const [resultCheckout, setResultCheckout] = useState(null);
   const handleBuy = () => {
     const newData = carts.map((item) => {
       return {
@@ -34,19 +35,21 @@ function Checkout() {
       deliveryCost: 15000,
       methodPayment: "bank_transfer",
       email: "abudzaralghifari8@gmail.com",
-    }
+    };
 
     dispatch(makeOrder(data)).then((res) => {
-      setResultCheckout(res.data)
-      setModalCheckout(true)
-    })
-  }
+      setResultCheckout(res.data);
+      setModalCheckout(true);
+    });
+  };
 
   const [isLoadingProcess, setIsLoadingProcess] = useState(false);
   const [localListAddress, setLocalListAddress] = useState([]);
   console.log(localListAddress);
   useEffect(() => {
-    dispatch(getListAddressUser());
+    if (localStorage.getItem("token")) {
+      dispatch(getListAddressUser());
+    }
   }, [dispatch]);
 
   //useEffect menampung list address ke state lokal
@@ -112,7 +115,6 @@ function Checkout() {
     });
   }
 
-
   return (
     <div className="container">
       <div className="row row mt-7 mb-5">
@@ -124,29 +126,30 @@ function Checkout() {
           {/* awal shipping addres */}
           <div className="card custom-card mb-3">
             {/* <div className="card-body "> */}
-            {localListAddress.length === 0 ?
+            {localListAddress.length === 0 ? (
               <button
                 className="color-gray w-100 py-4 bg-transparent rounded my-4"
                 style={{ border: "3px dashed #9B9B9B" }}
                 onClick={() => {
-                  setState({ toggleModal: true })
+                  setState({ toggleModal: true });
                   console.log("adadadada");
-
                 }}
               >
                 Add your address before shopping
-            </button>
-              : ""}
-            {
-              localListAddress.map((data, idx) => {
+              </button>
+            ) : (
+              ""
+            )}
+            {localListAddress.map((data, idx) => {
+              if (data.isPrimary) {
                 return (
                   <ListUserAddress
                     item={data}
                     fireEvents={setLocalListAddress}
                   />
                 );
-              })
-            }
+              }
+            })}
             {/* <button className="btn custom-btn color-gray shadow-none" onClick={() => { setState({ ...state, toggleModal: true }) }} >
               Choose another address
               </button> */}
@@ -155,35 +158,40 @@ function Checkout() {
           {/* akhir shipping addres */}
 
           {/* awal item */}
-          {carts && carts.map((item, index) => {
-            return (
-              <>
-                <div className="card custom-card mb-3" key={index}>
-                  <div className="card-body">
-                    <div className="d-sm-block d-md-flex align-items-center">
-                      <div className="text-center border-md">
-                        <img
-                          src={item.imageProduct[0]}
-                          alt="product"
-                          className="border-image"
-                        />
-                      </div>
-                      <div className="d-md-inline mt-3 mt-md-0  ms-0 ms-md-3 d-md-flex flex-column  align-items-center">
-                        <div className=" me-auto f-16 fw-bold d-inline-block text-truncate" style={{ maxWidth: "350px" }}>
-                          {`(${item.quantity})`} {item.nameProduct}
+          {carts &&
+            carts.map((item, index) => {
+              return (
+                <>
+                  <div className="card custom-card mb-3" key={index}>
+                    <div className="card-body">
+                      <div className="d-sm-block d-md-flex align-items-center">
+                        <div className="text-center border-md">
+                          <img
+                            src={item.imageProduct[0]}
+                            alt="product"
+                            className="border-image"
+                          />
                         </div>
-                        <div className=" me-auto color-gray f-12 fw-500">
-                          {item.nameSeller}
+                        <div className="d-md-inline mt-3 mt-md-0  ms-0 ms-md-3 d-md-flex flex-column  align-items-center">
+                          <div
+                            className=" me-auto f-16 fw-bold d-inline-block text-truncate"
+                            style={{ maxWidth: "350px" }}
+                          >
+                            {`(${item.quantity})`} {item.nameProduct}
+                          </div>
+                          <div className=" me-auto color-gray f-12 fw-500">
+                            {item.nameSeller}
+                          </div>
+                        </div>
+                        <div className="d-md-inline ms-md-auto f-18 fw-bold">
+                          {Rupiah(`Rp ${item.totalPrice}`)}
                         </div>
                       </div>
-                      <div className="d-md-inline ms-md-auto f-18 fw-bold">{Rupiah(`Rp ${item.totalPrice}`)}</div>
                     </div>
                   </div>
-                </div>
-              </>
-            )
-          })}
-
+                </>
+              );
+            })}
 
           {/* akhir item */}
         </div>
@@ -197,7 +205,13 @@ function Checkout() {
               <h4 className="f-16 fw-bold mb-3">Shopping summary</h4>
               <div className="d-flex justify-content-between">
                 <div className="color-gray fw-500 f-16">Order</div>
-                <div className="f-18 fw-bold">{Rupiah(`Rp ${carts.map((item) => item.totalPrice).reduce((a, b) => a + b, 0)}`)}</div>
+                <div className="f-18 fw-bold">
+                  {Rupiah(
+                    `Rp ${carts
+                      .map((item) => item.totalPrice)
+                      .reduce((a, b) => a + b, 0)}`
+                  )}
+                </div>
               </div>
               <div className="d-flex justify-content-between">
                 <div className="color-gray fw-500 f-16">Delivery</div>
@@ -206,7 +220,15 @@ function Checkout() {
               <hr />
               <div className="d-flex justify-content-between">
                 <div className="f-16 fw-bold mb-3">Shopping summary</div>
-                <div className="color-red fw-bold f-18">{Rupiah(`Rp ${carts.map((item) => item.totalPrice).reduce((a, b) => a + b, 0) + 15000}`)}</div>
+                <div className="color-red fw-bold f-18">
+                  {Rupiah(
+                    `Rp ${
+                      carts
+                        .map((item) => item.totalPrice)
+                        .reduce((a, b) => a + b, 0) + 15000
+                    }`
+                  )}
+                </div>
               </div>
               <div className="d-grid gap-2 col-12 mx-auto">
                 <button
@@ -260,7 +282,7 @@ function Checkout() {
                       />
                     </div>
                     <div className="fw-bold f-18 align-self-center ms-5 me-auto">
-                      Bank BCA
+                      Bank BRI
                     </div>
                     <input
                       className="form-check-input shadow-none border-0 align-self-center custom-checkbox bg-red "
@@ -281,7 +303,7 @@ function Checkout() {
                       />
                     </div>
                     <div className=" fw-bold f-18 align-self-center ms-5 me-auto">
-                      Bank BRI
+                      Bank BCA
                     </div>
                     <input
                       className="form-check-input shadow-none border-0 align-self-center custom-checkbox bg-red "
@@ -315,7 +337,13 @@ function Checkout() {
                   <h4 className="f-16 fw-bold mb-3">Shopping summary</h4>
                   <div className="d-flex justify-content-between">
                     <div className="color-gray fw-500 f-16">Order</div>
-                    <div className="f-18 fw-bold">{Rupiah(`Rp ${carts.map((item) => item.totalPrice).reduce((a, b) => a + b, 0)}`)}</div>
+                    <div className="f-18 fw-bold">
+                      {Rupiah(
+                        `Rp ${carts
+                          .map((item) => item.totalPrice)
+                          .reduce((a, b) => a + b, 0)}`
+                      )}
+                    </div>
                   </div>
                   <div className="d-flex justify-content-between">
                     <div className="color-gray fw-500 f-16">Delivery</div>
@@ -326,7 +354,15 @@ function Checkout() {
                   <div className="d-flex justify-content-between mt-3">
                     <div className="d-flex flex-column align-self-start">
                       <div className="f-16 fw-bold">Shopping summary</div>
-                      <div className="color-red fw-bold f-18">{Rupiah(`Rp ${carts.map((item) => item.totalPrice).reduce((a, b) => a + b, 0) + 15000}`)}</div>
+                      <div className="color-red fw-bold f-18">
+                        {Rupiah(
+                          `Rp ${
+                            carts
+                              .map((item) => item.totalPrice)
+                              .reduce((a, b) => a + b, 0) + 15000
+                          }`
+                        )}
+                      </div>
                     </div>
                     <div className="align-self-end">
                       <button
@@ -349,25 +385,35 @@ function Checkout() {
       </div>
 
       {/* modal dari buy product detail */}
-      {resultCheckout &&
-
+      {resultCheckout && (
         <Modal
           isOpen={modalCheckout}
-          className="modalPositionAndSizeConfig"
+          className="modalPositionAndSizeConfig2"
           overlayClassName="modalOverLayConfig"
           closeTimeoutMS={400}
           ariaHideApp={false}
         >
-          <div className="w-100 d-flex mb-4"><span className="material-icons ms-auto hover-danger c-pointer" onClick={() => { setModalCheckout(false) }} >close</span></div>
-          <div className="" style={{ minHeight: "450px" }} >
-            <div style={{ display: "flex", justifyContent: "center" }} >
+          <div className="w-100 d-flex mb-4">
+            <span
+              className="material-icons ms-auto hover-danger c-pointer"
+              onClick={() => {
+                setModalCheckout(false);
+              }}
+            >
+              close
+            </span>
+          </div>
+          <div className="" style={{ minHeight: "450px" }}>
+            <div style={{ display: "flex", justifyContent: "center" }}>
               <img alt="logo success" src="/img/success.png" />
             </div>
-            <h4 className="fw-bold text-center mt-1">{resultCheckout.message}</h4>
+            <h4 className="fw-bold text-center mt-1">
+              {resultCheckout.message}
+            </h4>
 
             <div className="px-4 py3">
               <div className="p-3 border border-black rounded">
-                <div >
+                <div>
                   <p className="fw-bold mb-0">Name: </p>
                   <p>{user.name}</p>
                 </div>
@@ -385,7 +431,11 @@ function Checkout() {
                 </div>
                 <div>
                   <p className="fw-bold mb-0">Payment method: </p>
-                  <p>{resultCheckout.data.payment_type === "bank_transfer" ? "Bank Transfer" : ""}</p>
+                  <p>
+                    {resultCheckout.data.payment_type === "bank_transfer"
+                      ? "Bank Transfer"
+                      : ""}
+                  </p>
                 </div>
                 <div>
                   <p className="fw-bold mb-0">Bank: </p>
@@ -403,7 +453,7 @@ function Checkout() {
             </div>
           </div>
         </Modal>
-      }
+      )}
 
       <Modal
         isOpen={state.toggleModal}
@@ -561,8 +611,6 @@ function Checkout() {
         </div>
       </Modal>
 
-
-
       {/* end modal */}
       <style jsx>
         {`
@@ -678,4 +726,4 @@ function Checkout() {
   );
 }
 
-export default Checkout;
+export default withAuth(Checkout);

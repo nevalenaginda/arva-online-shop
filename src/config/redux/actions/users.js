@@ -113,6 +113,7 @@ export const login = (data) => (dispatch) => {
     axios
       .post(`${Url}/v1/users/login`, data)
       .then((res) => {
+        console.log("ini jalan dua kali gak ya");
         dispatch({
           type: "LOGIN",
           payload: res.data.data,
@@ -140,8 +141,9 @@ export const getProfile = () => (dispatch) => {
         resolve(res.data.message);
       })
       .catch((err) => {
-        dispatch(getProfileFailure(err.response.data.message));
-        reject(err.response.data.message);
+        console.log("ini erornya", err);
+        dispatch(getProfileFailure(err));
+        reject(err);
       });
   });
 };
@@ -156,7 +158,7 @@ export const updateProfile = (data) => (dispatch) => {
         resolve(res);
       })
       .catch((err) => {
-        dispatch(updateProfileFailure(err.response.data.message));
+        // dispatch(updateProfileFailure(err.response.data.message));
         reject(err);
       });
   });
@@ -173,7 +175,7 @@ export const getListAddressUser = () => (dispatch) => {
         resolve(res);
       })
       .catch((err) => {
-        dispatch(getListAddressUserFailure(err.response.data.message));
+        // dispatch(getListAddressUserFailure(err.response.data.message));
         reject(err);
       });
   });
@@ -224,17 +226,19 @@ export const updateAddressUser = (id, data) => (dispatch) => {
   });
 };
 
-export const getHistoryOrderUser = (status = "") => (dispatch) => {
-  return new Promise((resolve, reject) => {
-    const Url = process.env.api;
-    axiosApiInstance
-      .get(`${Url}/v1/order/user?status=${status}`)
-      .then((res) => {
-        dispatch(getHistoryOderUserSuccess(res.data.data));
-        resolve(res);
-      })
-      .catch((err) => {
-        reject(err);
-      });
-  });
-};
+export const getHistoryOrderUser =
+  (status = "") =>
+  (dispatch) => {
+    return new Promise((resolve, reject) => {
+      const Url = process.env.api;
+      axiosApiInstance
+        .get(`${Url}/v1/order/user?status=${status}`)
+        .then((res) => {
+          dispatch(getHistoryOderUserSuccess(res.data.data));
+          resolve(res);
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
+  };

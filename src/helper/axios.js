@@ -25,20 +25,11 @@ axiosApiInstance.interceptors.response.use(
     return response;
   },
   async function (error) {
-    // if (error.response.status === 401) {
-    //   if (error.response.data.message === "Token expired") {
-    //     localStorage.removeItem("token");
-    //   }
-    //   if (error.response.data.message === "Invalid signature") {
-    //     localStorage.removeItem("token");
-    //     Swal.fire({
-    //       title: "Warning!",
-    //       text: "Do not change the token",
-    //       icon: "warning",
-    //       showConfirmButton: false,
-    //     });
-    //   }
-    // }
+    if (error.response.status === 400) {
+      if (error.response.data.message === "Invalid Token") {
+        return Promise.reject(error);
+      }
+    }
     return Promise.reject(error);
   }
 );

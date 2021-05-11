@@ -14,10 +14,11 @@ import {
   getHistoryOrderUser,
 } from "../../src/config/redux/actions/users";
 import { ListUserAddress } from "../../src/component/module";
+import withAuth from "../../src/helper/authNext";
 
-export default function Profil() {
+const Profile = () => {
   const dispatch = useDispatch();
-  // const router = useRouter();
+  const router = useRouter();
   // const api = process.env.api;
   const { myAcount, shippingAddress, myOrder } = useSelector(
     (state) => state.Helpers
@@ -42,6 +43,21 @@ export default function Profil() {
       orderStatus: "",
     },
   });
+
+  //function clear object null or undefined
+  function cleanCondition(obj) {
+    for (var propName in obj) {
+      if (
+        obj[propName] === null ||
+        obj[propName] === undefined ||
+        obj[propName] === "null" ||
+        obj[propName] === ""
+      ) {
+        delete obj[propName];
+      }
+    }
+    return obj;
+  }
 
   //=============ini awal bagian edit profile user===============
   // state unable and disable edit profile
@@ -68,19 +84,27 @@ export default function Profil() {
 
   const handleChangeImage = (event) => {
     // const imgFiles = event.target.files[0];
-
-    if (event.target.files[0].size > 2 * 1024 * 1024) {
+    const { type } = event.target.files[0];
+    if (type.match(/jpeg|png/g)) {
+      if (event.target.files[0].size > 2 * 1024 * 1024) {
+        Swal.fire(
+          "Something Error!",
+          "This file is to large. Maximum file size 2 mb.",
+          "error"
+        );
+      } else {
+        setImgUrl(URL.createObjectURL(event.target.files[0]));
+        setImgStatus(true);
+        setDataImage({
+          image: event.target.files[0],
+        });
+      }
+    } else {
       Swal.fire(
         "Something Error!",
-        "This file is to large. Maximum file size 2 mb.",
+        "Only .png, .jpg and .jpeg format allowed!",
         "error"
       );
-    } else {
-      setImgUrl(URL.createObjectURL(event.target.files[0]));
-      setImgStatus(true);
-      setDataImage({
-        image: event.target.files[0],
-      });
     }
   };
 
@@ -98,10 +122,16 @@ export default function Profil() {
     event.preventDefault();
     const formData = new FormData();
     formData.append("name", profileUser.name);
-    formData.append("phone", profileUser.phone);
+
     formData.append("email", profileUser.email);
     formData.append("gender", profileUser.gender);
-    formData.append("birthday", profileUser.birthday);
+
+    if (profileUser.phone) {
+      formData.append("phone", profileUser.phone);
+    }
+    if (profileUser.birthday) {
+      formData.append("birthday", profileUser.birthday);
+    }
     if (imgStatus) {
       formData.append("avatar", dataImage.image);
     }
@@ -119,15 +149,17 @@ export default function Profil() {
 
   //fetch data user dari api
   useEffect(() => {
-    dispatch(getProfile())
-      .then((res) => {
-        // console.log(res);
-        // Swal.fire("Success", res, "success");
-      })
-      .catch((err) => {
-        // console.log(err);
-        Swal.fire("Something Error!", err, "error");
-      });
+    if (localStorage.getItem("token")) {
+      dispatch(getProfile())
+        .then((res) => {
+          // console.log(res);
+          // Swal.fire("Success", res, "success");
+        })
+        .catch((err) => {
+          // console.log(err);
+          // Swal.fire("Something Error!", err, "error");
+        });
+    }
   }, [dispatch]);
 
   //set data user dari state global ke state lokal profileUser
@@ -151,7 +183,9 @@ export default function Profil() {
 
   //fetch data address user dari api
   useEffect(() => {
-    dispatch(getListAddressUser());
+    if (localStorage.getItem("token")) {
+      dispatch(getListAddressUser());
+    }
   }, [dispatch]);
 
   //useEffect menampung list address ke state lokal
@@ -228,17 +262,19 @@ export default function Profil() {
 
   useEffect(() => {
     setLoadingHistory(true);
-    dispatch(getHistoryOrderUser(state.myOrder.orderStatus))
-      .then((res) => {
-        console.log("order history", res.data.data);
-        setLoadingHistory(false);
-        setLocalHistoryOrder(res.data.data);
-      })
-      .catch((err) => {
-        setLoadingHistory(false);
-        console.log(err);
-        setLocalHistoryOrder([]);
-      });
+    if (localStorage.getItem("token")) {
+      dispatch(getHistoryOrderUser(state.myOrder.orderStatus))
+        .then((res) => {
+          console.log("order history", res.data.data);
+          setLoadingHistory(false);
+          setLocalHistoryOrder(res.data.data);
+        })
+        .catch((err) => {
+          setLoadingHistory(false);
+          console.log(err);
+          setLocalHistoryOrder([]);
+        });
+    }
   }, [state.myOrder.orderStatus]);
 
   return (
@@ -291,15 +327,17 @@ export default function Profil() {
                   onClick={(e) => setProfileIsDisabled(!profileIsDisable)}
                 >
                   <span
-                    className={`material-icons  me-2 ${profileIsDisable ? "color-gray" : "text-danger"
-                      }`}
+                    className={`material-icons  me-2 ${
+                      profileIsDisable ? "color-gray" : "text-danger"
+                    }`}
                     style={{ fontSize: "20px" }}
                   >
                     mode_edit
                   </span>
                   <p
-                    className={`m-0 my-auto ${profileIsDisable ? "color-gray" : "text-danger"
-                      }`}
+                    className={`m-0 my-auto ${
+                      profileIsDisable ? "color-gray" : "text-danger"
+                    }`}
                   >
                     Ubah Profil
                   </p>
@@ -393,6 +431,23 @@ export default function Profil() {
                 My order
               </button>
             </div>
+            <div className="d-flex mb-4">
+              <span className="material-icons text-white rounded-circle p-2 me-3 bg-warning">
+                logout
+              </span>
+              <button
+                className={
+                  "m-0 my-auto fs-6 fw-bold hover-danger bg-transparent border-0"
+                }
+                onClick={() => {
+                  router.push("/auth/login");
+                  localStorage.removeItem("token");
+                  dispatch({ type: "LOGOUT" });
+                }}
+              >
+                Logout
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -454,15 +509,17 @@ export default function Profil() {
                         onClick={(e) => setProfileIsDisabled(!profileIsDisable)}
                       >
                         <span
-                          className={`material-icons  me-2 ${profileIsDisable ? "color-gray" : "text-danger"
-                            }`}
+                          className={`material-icons  me-2 ${
+                            profileIsDisable ? "color-gray" : "text-danger"
+                          }`}
                           style={{ fontSize: "20px" }}
                         >
                           mode_edit
                         </span>
                         <p
-                          className={`m-0 my-auto ${profileIsDisable ? "color-gray" : "text-danger"
-                            }`}
+                          className={`m-0 my-auto ${
+                            profileIsDisable ? "color-gray" : "text-danger"
+                          }`}
                         >
                           Ubah Profil
                         </p>
@@ -470,10 +527,11 @@ export default function Profil() {
                     </div>
                     <div className="d-flex justify-content-center ">
                       <button
-                        className={` rounded-pill py-2 px-5  overflow-hidden position-relative my-4 ${profileIsDisable
-                          ? " bg-secondary text-white  "
-                          : "bg-transparent border-danger text-danger"
-                          }`}
+                        className={` rounded-pill py-2 px-5  overflow-hidden position-relative my-4 ${
+                          profileIsDisable
+                            ? " bg-secondary text-white  "
+                            : "bg-transparent border-danger text-danger"
+                        }`}
                         disabled={profileIsDisable}
                       >
                         Select Image
@@ -586,10 +644,11 @@ export default function Profil() {
                             />
                             <label
                               htmlFor="male"
-                              className={`my-auto ${profileIsDisable && "text-muted"
-                                }`}
+                              className={`my-auto ${
+                                profileIsDisable && "text-muted"
+                              }`}
                             >
-                              Laki Laki
+                              Laki-laki
                             </label>
                           </div>
                           <div className="d-flex">
@@ -607,8 +666,9 @@ export default function Profil() {
                             />
                             <label
                               htmlFor="female"
-                              className={`my-auto ${profileIsDisable && "text-muted"
-                                }`}
+                              className={`my-auto ${
+                                profileIsDisable && "text-muted"
+                              }`}
                             >
                               Perempuan
                             </label>
@@ -621,34 +681,25 @@ export default function Profil() {
                       <label htmlFor="input" className="me-4 my-auto">
                         Date of Birth
                       </label>
-                      {profileUser.birthday ? (
-                        <input
-                          type="date"
-                          placeholder="write your name..."
-                          name="birthday"
-                          value={profileUser.birthday || "1990-01-01"}
-                          className="p-2 border rounded form-control"
-                          style={{ outline: "none", width: "70%" }}
-                          onChange={handleChangeDataProfile}
-                          disabled={profileIsDisable}
-                        />
-                      ) : (
-                        <input
-                          type="date"
-                          placeholder="write your name..."
-                          name="birthday"
-                          className="p-2 border rounded form-control"
-                          style={{ outline: "none", width: "70%" }}
-                          disabled={profileIsDisable}
-                        />
-                      )}
+
+                      <input
+                        type="date"
+                        placeholder="write your name..."
+                        name="birthday"
+                        value={profileUser.birthday || "1990-01-01"}
+                        className="p-2 border rounded form-control"
+                        style={{ outline: "none", width: "70%" }}
+                        onChange={handleChangeDataProfile}
+                        disabled={profileIsDisable}
+                      />
                     </div>
 
                     <div className="w-100 d-flex justify-content-center mb-3">
                       <div className="d-flex  justify-content-center">
                         <button
-                          className={` text-white border-0 rounded-pill px-5 py-2 mx-3 ${profileIsDisable ? "btn-secondary" : "btn-danger"
-                            }`}
+                          className={` text-white border-0 rounded-pill px-5 py-2 mx-3 ${
+                            profileIsDisable ? "btn-secondary" : "btn-danger"
+                          }`}
                           disabled={profileIsDisable}
                           onClick={handleSubmitChangeProfile}
                         >
@@ -684,10 +735,11 @@ export default function Profil() {
                     </div>
                     <div className="d-flex justify-content-center">
                       <button
-                        className={` rounded-pill py-2 px-5  overflow-hidden position-relative my-4 ${profileIsDisable
-                          ? " bg-secondary text-white  "
-                          : "bg-transparent border-danger text-danger"
-                          }`}
+                        className={` rounded-pill py-2 px-5  overflow-hidden position-relative my-4 ${
+                          profileIsDisable
+                            ? " bg-secondary text-white  "
+                            : "bg-transparent border-danger text-danger"
+                        }`}
                         disabled={profileIsDisable}
                       >
                         Select Image
@@ -1161,4 +1213,6 @@ export default function Profil() {
       </style>
     </div>
   );
-}
+};
+
+export default withAuth(Profile);
