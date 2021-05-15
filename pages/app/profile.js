@@ -24,6 +24,12 @@ const Profile = () => {
     (state) => state.Helpers
   );
   const { user, loading, listAddressUser } = useSelector((state) => state.user);
+  
+  useEffect(()=>{
+    if(user.role === "seller"){
+      router.push("/app/profile-store")
+    }
+  }, [user])
 
   const [state, setState] = useState({
     toggleModal: false,
@@ -44,21 +50,6 @@ const Profile = () => {
     },
   });
 
-  //function clear object null or undefined
-  function cleanCondition(obj) {
-    for (var propName in obj) {
-      if (
-        obj[propName] === null ||
-        obj[propName] === undefined ||
-        obj[propName] === "null" ||
-        obj[propName] === ""
-      ) {
-        delete obj[propName];
-      }
-    }
-    return obj;
-  }
-
   //=============ini awal bagian edit profile user===============
   // state unable and disable edit profile
   const [profileIsDisable, setProfileIsDisabled] = useState(true);
@@ -67,9 +58,7 @@ const Profile = () => {
   const [isLoadingProcess, setIsLoadingProcess] = useState(false);
 
   //state menampung alamat gambar
-  const [imgUrl, setImgUrl] = useState(
-    "https://www.jewishinteractive.org/wp-content/uploads/2016/03/person.png"
-  );
+  const [imgUrl, setImgUrl] = useState(null);
 
   // state untuk nampung data user
   const [profileUser, setProfileUser] = useState({});
@@ -117,8 +106,7 @@ const Profile = () => {
   };
 
   //patch data profile yang diubah ke api
-  const handleSubmitChangeProfile = (e) => {
-    console.log(profileUser);
+  const handleSubmitChangeProfile = (event) => {
     event.preventDefault();
     const formData = new FormData();
     formData.append("name", profileUser.name);
@@ -150,15 +138,7 @@ const Profile = () => {
   //fetch data user dari api
   useEffect(() => {
     if (localStorage.getItem("token")) {
-      dispatch(getProfile())
-        .then((res) => {
-          // console.log(res);
-          // Swal.fire("Success", res, "success");
-        })
-        .catch((err) => {
-          // console.log(err);
-          // Swal.fire("Something Error!", err, "error");
-        });
+      dispatch(getProfile());
     }
   }, [dispatch]);
 
@@ -166,13 +146,16 @@ const Profile = () => {
   useEffect(() => {
     if (user) {
       setProfileUser(user);
+      setImgUrl(user.avatar);
     }
   }, [user]);
 
   //set url profile user
   useEffect(() => {
-    if (profileUser.avatar) {
-      setImgUrl(profileUser.avatar);
+    if (!imgUrl) {
+      setImgUrl(
+        "https://www.jewishinteractive.org/wp-content/uploads/2016/03/person.png"
+      );
     }
   }, [profileUser]);
   //===========ini akhir bagian edit profile user========
@@ -192,7 +175,6 @@ const Profile = () => {
   useEffect(() => {
     if (listAddressUser) {
       setLocalListAddress(listAddressUser);
-      console.log("ini data list address", listAddressUser);
     }
   }, [listAddressUser]);
 
@@ -218,8 +200,8 @@ const Profile = () => {
         .required("Required!"),
       recipientPhone: Yup.string().required("Required!"),
       postalCode: Yup.string()
-        .min(2, "Mininum 2 characters")
-        .max(15, "Maximum 15 characters")
+        .min(6, "Mininum 6 characters")
+        .max(6, "Maximum 6 characters")
         .required("Required!"),
       city: Yup.string()
         .min(2, "Mininum 2 characters")
@@ -234,11 +216,12 @@ const Profile = () => {
       dispatch(insertAddressUser(values))
         .then((res) => {
           setIsLoadingProcess(false);
+          setLocalListAddress([]);
           Swal.fire("Success", res.data.message, "success");
         })
         .catch((err) => {
           setIsLoadingProcess(false);
-          // console.log(err);
+
           Swal.fire("Something Error!", err.response.data.message, "error");
         });
     },
@@ -265,13 +248,12 @@ const Profile = () => {
     if (localStorage.getItem("token")) {
       dispatch(getHistoryOrderUser(state.myOrder.orderStatus))
         .then((res) => {
-          console.log("order history", res.data.data);
           setLoadingHistory(false);
           setLocalHistoryOrder(res.data.data);
         })
         .catch((err) => {
           setLoadingHistory(false);
-          console.log(err);
+
           setLocalHistoryOrder([]);
         });
     }
@@ -317,7 +299,7 @@ const Profile = () => {
               </div>
               <div className="align-self-center">
                 {profileUser.name ? (
-                  <p className="fw-bold m-0 mb-1">{profileUser.name}</p>
+                  <p className="fw-bold m-0 mb-1">{user.name}</p>
                 ) : (
                   <p className="fw-bold m-0 mb-1">username</p>
                 )}
@@ -574,6 +556,7 @@ const Profile = () => {
                           className="p-2 border rounded"
                           style={{ outline: "none", width: "70%" }}
                           name="name"
+                          onChange={handleChangeDataProfile}
                           disabled={profileIsDisable}
                         />
                       )}

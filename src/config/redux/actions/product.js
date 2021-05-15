@@ -1,5 +1,6 @@
 import axios from "axios";
 import axiosApiInstance from "../../../helper/axios";
+import Swal from "sweetalert2";
 
 export const getHomeProduct = () => (dispatch) => {
   return new Promise((resolve, reject) => {
@@ -11,7 +12,11 @@ export const getHomeProduct = () => (dispatch) => {
         resolve(res.data.message);
       })
       .catch((err) => {
-        reject(new Error(err.response.data.message));
+        if (err.response) {
+          reject(new Error(err.response.data.message));
+        } else {
+          Swal.fire("Internal Server Error!.", "", "error");
+        }
       });
   });
 };
@@ -46,24 +51,23 @@ export const getPopularProduct = () => (dispatch) => {
   });
 };
 
-export const getCategoryProduct = (category, queryPage, querySize) => (
-  dispatch
-) => {
-  return new Promise((resolve, reject) => {
-    const Url = process.env.api;
-    axios
-      .get(
-        `${Url}/v1/product/list?category=${category}&page=${queryPage}&size=${querySize}`
-      )
-      .then((res) => {
-        dispatch({ type: "CATEGORY_PRODUCT", payload: res.data.data });
-        resolve(res);
-      })
-      .catch((err) => {
-        reject(err);
-      });
-  });
-};
+export const getCategoryProduct =
+  (category, queryPage, querySize) => (dispatch) => {
+    return new Promise((resolve, reject) => {
+      const Url = process.env.api;
+      axios
+        .get(
+          `${Url}/v1/product/list?category=${category}&page=${queryPage}&size=${querySize}`
+        )
+        .then((res) => {
+          dispatch({ type: "CATEGORY_PRODUCT", payload: res.data.data });
+          resolve(res);
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
+  };
 
 export const getDetailProduct = (id) => (dispatch) => {
   return new Promise((resolve, reject) => {
@@ -75,7 +79,11 @@ export const getDetailProduct = (id) => (dispatch) => {
         resolve(res.data.message);
       })
       .catch((err) => {
-        reject(new Error(err.response.data.message));
+        if (err.response) {
+          reject(new Error(err.response.data.message));
+        } else {
+          Swal.fire("Internal Server Error!.", "", "error");
+        }
       });
   });
 };

@@ -17,12 +17,10 @@ export default function Verify() {
             headers: { Authorization: `Bearer ${token}` },
           })
           .then((result) => {
-            console.log(result);
             Swal.fire("Success", result.data.message, "success");
             router.push("/auth/login");
           })
           .catch((err) => {
-            console.log(err);
             Swal.fire("Something Error!", err.response.data.message, "error");
             router.push("/");
           });

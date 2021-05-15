@@ -78,6 +78,13 @@ export default function Navbar() {
             <button
               className="rounded-circle overflow-hidden bg-transparent border-0 mb-3 d-flex justify-content-center"
               style={{ width: "100px", height: "100px" }}
+              onClick={()=>{
+                if(router.pathname.split("/")[2] === "profile"){
+                  router.push("/app/profile")
+                }else{
+                  router.push("/app/profile-store")
+                }
+              }}
             >
               <img src={user.avatar} className="w-100 align-self-center" />
             </button>

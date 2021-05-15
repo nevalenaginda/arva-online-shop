@@ -40,6 +40,7 @@ function listUserAddress({ item, fireEvents }) {
         setIsLoadingProcess(true);
         dispatch(deleteAddressUser(id))
           .then((res) => {
+            fireEvents([]);
             setIsLoadingProcess(false);
             Swal.fire("Success", res.data.message, "success");
           })
@@ -73,8 +74,8 @@ function listUserAddress({ item, fireEvents }) {
         .required("Required!"),
       recipientPhone: Yup.string().required("Required!"),
       postalCode: Yup.string()
-        .min(2, "Mininum 2 characters")
-        .max(15, "Maximum 15 characters")
+        .min(6, "Mininum 6 characters")
+        .max(6, "Maximum 6 characters")
         .required("Required!"),
       city: Yup.string()
         .min(2, "Mininum 2 characters")
@@ -94,15 +95,11 @@ function listUserAddress({ item, fireEvents }) {
         })
         .catch((err) => {
           setIsLoadingProcess(false);
-          // console.log(err);
+
           Swal.fire("Something Error!", err.response.data.message, "error");
         });
     },
   });
-
-  // useEffect(() => {
-  //   dispatch(getListAddressUser());
-  // }, [dispatch]);
 
   return (
     <div className="p-3 border border-danger rounded mb-3" key={address.id}>

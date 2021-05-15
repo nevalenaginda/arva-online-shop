@@ -16,35 +16,57 @@ function index() {
   const dispatch = useDispatch();
   const { carts } = useSelector((state) => state.carts);
   const [state, setState] = useState(null);
-  const [activeBtn, setActiveBtn] = useState(false);
   const [isSelected, setisSelected] = useState([]);
   const [load, setLoad] = useState(true);
   const [dataSelected, setDataSelected] = useState([]);
+  const [count, setCount] = useState(0);
+  const [check, setCheck] = useState([]);
+  const [activeBtn, setActiveBtn] = useState("");
 
   const handleSelected = (item) => {
     setDataSelected([...dataSelected, item]);
     const newId = isSelected.push(String(item.id));
-    // const uniqueId = [...new Set(isSelected)];
-    // console.log(uniqueId);
   };
 
   const handleDelete = () => {
-    const uniqueId = [...new Set(isSelected)];
-    console.log(uniqueId);
-    const data = {
-      cartId: JSON.stringify(uniqueId),
-    };
-    axiosApiInstance.post(`${process.env.api}/v1/cart/delete`, data);
-    setLoad(true);
-    setDataSelected([]);
-    // dispatch(deleteCart(data)).then((res) => {
-    //   Swal.fire("Success", res, "success");
-    // }).catch((err) => {
-    //   console.log(err);
-    // })
-    // .catch((err) => {
-    //   Swal.fire("Something Error!", err, "error");
-    // });
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // const uniqueId = [...new Set(isSelected)];
+        const data = {
+          cartId: JSON.stringify(check),
+        };
+        axiosApiInstance
+          .post(`${process.env.api}/v1/cart/delete`, data)
+          .then((res) => {
+            setLoad(true);
+            setCheck([]);
+            Swal.fire("Success", res, "success");
+          })
+          .catch((err) => {
+            Swal.fire("Something Error!", err, "error");
+          });
+      }
+    });
+  };
+
+  const handleCheck = (e) => {
+    if (check.includes(e.target.id)) {
+      const index = check.indexOf(e.target.id);
+      if (index > -1) {
+        check.splice(index, 1);
+      }
+      setCheck(check);
+    } else {
+      setCheck([...check, e.target.id]);
+    }
   };
 
   const handleAdd = (item) => {
@@ -62,8 +84,34 @@ function index() {
   };
 
   const handleRemove = (item) => {
-    if (item.quantity === 0) {
-      setActiveBtn(false);
+    if (item.quantity <= 1) {
+      Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // const uniqueId = [...new Set(isSelected)];
+          const data = {
+            cartId: JSON.stringify(item.id),
+          };
+          axiosApiInstance
+            .post(`${process.env.api}/v1/cart/delete`, data)
+            .then((res) => {
+              setLoad(true);
+              setDataSelected([]);
+              Swal.fire("Success", res, "success");
+            })
+            .catch((err) => {
+              Swal.fire("Something Error!", err, "error");
+            });
+        }
+      });
+      // setActiveBtn(false);
     } else {
       if (item.quantity >= 1) {
         const data = {
@@ -80,12 +128,23 @@ function index() {
   };
 
   const handleBuy = () => {
-    dispatch({ type: "ADD_CART", payload: dataSelected });
+    // console.log(
+    //   check.map(
+    //     (item) =>
+    //       state.dataCart.filter((item2) => item2.id.toString() === item)[0]
+    //   )
+    // );
+    dispatch({
+      type: "ADD_CART",
+      payload: check.map(
+        (item) =>
+          state.dataCart.filter((item2) => item2.id.toString() === item)[0]
+      ),
+    });
     router.push("/app/checkout");
   };
 
   useEffect(() => {
-    console.log("adadad");
     if (load) {
       dispatch(getCart())
         .then(() => setLoad(false))
@@ -97,10 +156,8 @@ function index() {
   }, [handleAdd, handleRemove, handleDelete]);
 
   useEffect(() => {
-    console.log(carts);
     if (carts.dataCart) {
       if (carts.dataCart.length > 0) {
-        console.log(carts);
         setState(carts);
       } else {
         setState([]);
@@ -123,16 +180,31 @@ function index() {
                     type="checkbox"
                     value=""
                     id="flexCheckDefault"
+                    onClick={(e) => {
+                      if (check.length === state.dataCart.length) {
+                        setCheck([]);
+                      } else {
+                        setCheck(
+                          state.dataCart.map((item) => item.id.toString())
+                        );
+                      }
+                    }}
+                    checked={
+                      state && check.length === state.dataCart.length
+                        ? true
+                        : false
+                    }
                   />
                   <span className="fw-bold ms-3 me-auto me-md-0">
                     Select all items
                   </span>
                   <span className="text-muted ms-1 me-auto d-none d-md-block">
-                    (2 items selected)
+                    ({check.length} items selected)
                   </span>
                   <button
                     className="btn text-danger fw-bold shadow-none"
                     onClick={handleDelete}
+                    disabled={check.length === 0 ? true : false}
                   >
                     Delete
                   </button>
@@ -151,10 +223,9 @@ function index() {
                           <input
                             className="d-sm-inline-block form-check-input bg-danger border-0 rounded-0 shadow-none"
                             type="checkbox"
-                            // value={item.id}
-                            id="flexCheckDefault"
-                            // onSelect={(item) => console.log(item)}
-                            // onChange={(item) => console.log(item.target)}
+                            id={item.id}
+                            onChange={handleCheck}
+                            checked={check.includes(item.id.toString())}
                             onClick={() => handleSelected(item)}
                           />
                           <div className="d-none d-md-flex border-image ms-3">
@@ -183,9 +254,14 @@ function index() {
                           >
                             <button
                               className={`btn btn-grup radius-50 shadow-none  ${
-                                activeBtn ? "" : "btn-active"
+                                activeBtn === `remove-${index}`
+                                  ? "btn-active"
+                                  : ""
                               }`}
-                              onClick={(e) => handleRemove(item)}
+                              onClick={(e) => {
+                                handleRemove(item);
+                                setActiveBtn(`remove-${index}`);
+                              }}
                             >
                               <span className="material-icons f-14 ">
                                 remove
@@ -199,9 +275,12 @@ function index() {
                             </p>
                             <button
                               className={`btn btn-grup radius-50 text-center shadow-none  ${
-                                activeBtn ? "btn-active" : ""
+                                activeBtn === `add-${index}` ? "btn-active" : ""
                               }`}
-                              onClick={(e) => handleAdd(item)}
+                              onClick={(e) => {
+                                handleAdd(item);
+                                setActiveBtn(`add-${index}`);
+                              }}
                             >
                               <span className="material-icons f-14 fw-bold">
                                 add
@@ -230,11 +309,18 @@ function index() {
                 <div className="d-flex justify-content-between">
                   <span className="text-muted">Total price</span>
                   <span className="fw-bold f-18">
-                    {Rupiah(
-                      `Rp ${dataSelected
-                        .map((item) => item.totalPrice)
-                        .reduce((a, b) => a + b, 0)}`
-                    )}
+                    {state &&
+                      check.length > 0 &&
+                      Rupiah(
+                        `Rp ${check
+                          .map(
+                            (item) =>
+                              state.dataCart.filter(
+                                (item2) => item2.id.toString() === item
+                              )[0].totalPrice
+                          )
+                          .reduce((a, b) => a + b, 0)}`
+                      )}
                   </span>
                 </div>
                 <div className="row justify-content-center">
@@ -242,6 +328,7 @@ function index() {
                     <button
                       className="mt-3 btn w-100 bg-danger round text-white shadow-none btn-hover"
                       onClick={handleBuy}
+                      disabled={check.length === 0 ? true : false}
                     >
                       Buy
                     </button>

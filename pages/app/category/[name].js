@@ -58,7 +58,6 @@ function index() {
         .then((res) => {
           setTotalPage(res.data.data.totalPages);
           setState(res.data.data);
-          console.log("ini productnya yang di dapat", res.data.data.product);
         })
         .catch((err) => {
           setTotalPage(1);
@@ -78,7 +77,6 @@ function index() {
 
   const handleChangePage = (item, i) => {
     setQueryPage(i - 1);
-    console.log("sekarang halaman berapa", i);
   };
 
   const capitalizeFirstLetter = (string) => {

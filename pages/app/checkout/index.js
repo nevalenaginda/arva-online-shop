@@ -9,11 +9,13 @@ import {
   insertAddressUser,
 } from "../../../src/config/redux/actions/users";
 import Rupiah from "../../../src/helper/rupiah";
-import { ListUserAddress } from "../../../src/component/module";
+import { ListAddressCheckout } from "../../../src/component/module";
 import Swal from "sweetalert2";
 import withAuth from "../../../src/helper/authNext";
+import { useRouter } from "next/router";
 
 function Checkout() {
+  const router = useRouter();
   const dispatch = useDispatch();
   const { user, loading, listAddressUser } = useSelector((state) => state.user);
   const { carts } = useSelector((state) => state.carts);
@@ -30,22 +32,24 @@ function Checkout() {
         quantity: item.quantity,
       };
     });
-    const data = {
-      productId: JSON.stringify(newData),
-      deliveryCost: 15000,
-      methodPayment: "bank_transfer",
-      email: "abudzaralghifari8@gmail.com",
-    };
-
-    dispatch(makeOrder(data)).then((res) => {
-      setResultCheckout(res.data);
-      setModalCheckout(true);
-    });
+    if (newData.length > 0) {
+      const data = {
+        productId: JSON.stringify(newData),
+        deliveryCost: 15000,
+        methodPayment: "bank_transfer",
+        email: "abudzaralghifari8@gmail.com",
+      };
+      dispatch(makeOrder(data)).then((res) => {
+        setResultCheckout(res.data);
+        setModalCheckout(true);
+      });
+    } else {
+      Swal.fire("Info", "Select product first.", "info");
+    }
   };
 
   const [isLoadingProcess, setIsLoadingProcess] = useState(false);
   const [localListAddress, setLocalListAddress] = useState([]);
-  console.log(localListAddress);
   useEffect(() => {
     if (localStorage.getItem("token")) {
       dispatch(getListAddressUser());
@@ -56,7 +60,6 @@ function Checkout() {
   useEffect(() => {
     if (listAddressUser) {
       setLocalListAddress(listAddressUser);
-      console.log("ini data list address", listAddressUser);
     }
   }, [listAddressUser]);
 
@@ -126,24 +129,21 @@ function Checkout() {
           {/* awal shipping addres */}
           <div className="card custom-card mb-3">
             {/* <div className="card-body "> */}
-            {localListAddress.length === 0 ? (
+            {localListAddress.length === 0 && (
               <button
-                className="color-gray w-100 py-4 bg-transparent rounded my-4"
+                className="color-gray w-100 py-4 bg-transparent rounded"
                 style={{ border: "3px dashed #9B9B9B" }}
                 onClick={() => {
                   setState({ toggleModal: true });
-                  console.log("adadadada");
                 }}
               >
                 Add your address before shopping
               </button>
-            ) : (
-              ""
             )}
             {localListAddress.map((data, idx) => {
               if (data.isPrimary) {
                 return (
-                  <ListUserAddress
+                  <ListAddressCheckout
                     item={data}
                     fireEvents={setLocalListAddress}
                   />
@@ -392,18 +392,20 @@ function Checkout() {
           overlayClassName="modalOverLayConfig"
           closeTimeoutMS={400}
           ariaHideApp={false}
+          style={{ maxHeight: "60px" }}
         >
-          <div className="w-100 d-flex mb-4">
+          <div className="w-100 d-flex mb-2">
             <span
               className="material-icons ms-auto hover-danger c-pointer"
               onClick={() => {
                 setModalCheckout(false);
+                router.push("/app");
               }}
             >
               close
             </span>
           </div>
-          <div className="" style={{ minHeight: "450px" }}>
+          <div>
             <div style={{ display: "flex", justifyContent: "center" }}>
               <img alt="logo success" src="/img/success.png" />
             </div>
@@ -411,7 +413,7 @@ function Checkout() {
               {resultCheckout.message}
             </h4>
 
-            <div className="px-4 py3">
+            <div className="px-4 py3 all-list-checkout">
               <div className="p-3 border border-black rounded">
                 <div>
                   <p className="fw-bold mb-0">Name: </p>
@@ -450,6 +452,17 @@ function Checkout() {
                   <p>{`Rp ${resultCheckout.data.gross_amount}`}</p>
                 </div>
               </div>
+            </div>
+            <div className="mt-4 ms-4">
+              <button
+                className="btn custom-red-btn shadow-none text-white "
+                onClick={() => {
+                  setModalCheckout(false);
+                  router.push("/app");
+                }}
+              >
+                Back to home
+              </button>
             </div>
           </div>
         </Modal>
@@ -639,7 +652,15 @@ function Checkout() {
           .fw-500 {
             font-weight: 500;
           }
+          .all-list-checkout {
+            overflow-y: auto;
+            height: 360px;
+          }
 
+          .all-list-checkout::-webkit-scrollbar {
+            width: 10px;
+            height: 5px;
+          }
           .custom-card {
             box-shadow: 0px 0px 8px rgba(115, 115, 115, 0.25);
             border-radius: 4px;

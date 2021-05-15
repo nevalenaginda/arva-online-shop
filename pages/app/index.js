@@ -19,7 +19,6 @@ export default function App() {
   const dispatch = useDispatch();
   const { product } = useSelector((state) => state.product);
   const [homeProduct, setHomeProduct] = useState(null);
-  console.log(product);
   const isMobile = useMediaQuery({
     query: "(min-device-width: 992px)",
   });
@@ -239,7 +238,7 @@ export default function App() {
                     }}
                   />
                   <p className="mx-auto fs-2 my-auto" style={{ zIndex: "3" }}>
-                    glasses
+                    Glasses
                   </p>
                 </div>
                 <div

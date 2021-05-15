@@ -1,5 +1,6 @@
 import axios from "axios";
 import axiosApiInstance from "../../../helper/axios";
+import Swal from "sweetalert2";
 
 const signUpRequest = () => {
   return { type: "SIGN_UP_REQUEST" };
@@ -113,7 +114,6 @@ export const login = (data) => (dispatch) => {
     axios
       .post(`${Url}/v1/users/login`, data)
       .then((res) => {
-        console.log("ini jalan dua kali gak ya");
         dispatch({
           type: "LOGIN",
           payload: res.data.data,
@@ -125,7 +125,11 @@ export const login = (data) => (dispatch) => {
         resolve(res.data.message);
       })
       .catch((err) => {
-        reject(err.response.data.message);
+        if (err.response) {
+          reject(err.response.data.message);
+        } else {
+          Swal.fire("Internal Server Error!.", "", "error");
+        }
       });
   });
 };
@@ -141,7 +145,6 @@ export const getProfile = () => (dispatch) => {
         resolve(res.data.message);
       })
       .catch((err) => {
-        console.log("ini erornya", err);
         dispatch(getProfileFailure(err));
         reject(err);
       });
@@ -170,7 +173,6 @@ export const getListAddressUser = () => (dispatch) => {
     axiosApiInstance
       .get(`${Url}/v1/address/list`)
       .then((res) => {
-        console.log("ini jalan gak get list addressnya");
         dispatch(getListAddressUserSuccess(res.data.data));
         resolve(res);
       })
