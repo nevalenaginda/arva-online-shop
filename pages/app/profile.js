@@ -24,12 +24,12 @@ const Profile = () => {
     (state) => state.Helpers
   );
   const { user, loading, listAddressUser } = useSelector((state) => state.user);
-  
-  useEffect(()=>{
-    if(user.role === "seller"){
-      router.push("/app/profile-store")
+
+  useEffect(() => {
+    if (user.role === "seller") {
+      router.push("/app/profile-store");
     }
-  }, [user])
+  }, [user]);
 
   const [state, setState] = useState({
     toggleModal: false,
@@ -575,7 +575,7 @@ const Profile = () => {
                           className="p-2 border rounded"
                           style={{ outline: "none", width: "70%" }}
                           onChange={handleChangeDataProfile}
-                          disabled={profileIsDisable}
+                          disabled
                         />
                       ) : (
                         <input
@@ -584,7 +584,7 @@ const Profile = () => {
                           placeholder="write your Email..."
                           className="p-2 border rounded"
                           style={{ outline: "none", width: "70%" }}
-                          disabled={profileIsDisable}
+                          disabled
                         />
                       )}
                     </div>
@@ -772,15 +772,22 @@ const Profile = () => {
                     ? "Add your address before shopping"
                     : "Add new address"}
                 </button>
-
-                {localListAddress.map((data, idx) => {
-                  return (
-                    <ListUserAddress
-                      item={data}
-                      fireEvents={setLocalListAddress}
-                    />
-                  );
-                })}
+                <div
+                  style={{
+                    paddingRight: "10px",
+                    height: "600px",
+                    overflowY: "auto",
+                  }}
+                >
+                  {localListAddress.map((data, idx) => {
+                    return (
+                      <ListUserAddress
+                        item={data}
+                        fireEvents={setLocalListAddress}
+                      />
+                    );
+                  })}
+                </div>
               </div>
             </div>
           </div>
@@ -791,7 +798,7 @@ const Profile = () => {
               style={{ minHeight: "550px" }}
             >
               <h4 className="fw-bold">My order</h4>
-              <div className="d-flex my-4">
+              <div className="d-flex my-4 w-100 overflow-auto">
                 <button
                   className={
                     state.myOrder.allItem == true

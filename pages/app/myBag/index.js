@@ -220,22 +220,38 @@ function index() {
                     <div className="card card-shadow border-0 mb-3" key={index}>
                       <div className="card-body">
                         <div className="d-sm-block d-md-flex justify-content-between align-items-center">
-                          <input
-                            className="d-sm-inline-block form-check-input bg-danger border-0 rounded-0 shadow-none"
-                            type="checkbox"
-                            id={item.id}
-                            onChange={handleCheck}
-                            checked={check.includes(item.id.toString())}
-                            onClick={() => handleSelected(item)}
-                          />
-                          <div className="d-none d-md-flex border-image ms-3">
+                          <div className="d-flex">
+                            <input
+                              className=" form-check-input bg-danger border-0 rounded-0 shadow-none"
+                              type="checkbox"
+                              id={item.id}
+                              onChange={handleCheck}
+                              checked={check.includes(item.id.toString())}
+                              onClick={() => handleSelected(item)}
+                            />
+                            <div className="d-block d-md-none  ms-3  me-auto">
+                              <div className=" d-flex flex-column ">
+                                <span
+                                  className="fw-bold d-inline-block text-truncate"
+                                  style={{ maxWidth: "180px" }}
+                                >
+                                  {item.nameProduct}
+                                </span>
+                                <span className="text-muted">
+                                  {item.nameSeller}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className=" d-none d-md-flex border-image ms-3">
                             <img
                               alt="item"
                               src={item.imageProduct[0]}
                               className="border-image"
                             />
                           </div>
-                          <div className="d-inline-block d-md-flex ms-3  me-auto">
+                          <div className="d-none d-md-flex ms-3  me-auto">
                             <div className=" d-flex flex-column ">
                               <span
                                 className="fw-bold d-inline-block text-truncate"

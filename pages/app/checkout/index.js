@@ -222,10 +222,9 @@ function Checkout() {
                 <div className="f-16 fw-bold mb-3">Shopping summary</div>
                 <div className="color-red fw-bold f-18">
                   {Rupiah(
-                    `Rp ${
-                      carts
-                        .map((item) => item.totalPrice)
-                        .reduce((a, b) => a + b, 0) + 15000
+                    `Rp ${carts
+                      .map((item) => item.totalPrice)
+                      .reduce((a, b) => a + b, 0) + 15000
                     }`
                   )}
                 </div>
@@ -356,10 +355,9 @@ function Checkout() {
                       <div className="f-16 fw-bold">Shopping summary</div>
                       <div className="color-red fw-bold f-18">
                         {Rupiah(
-                          `Rp ${
-                            carts
-                              .map((item) => item.totalPrice)
-                              .reduce((a, b) => a + b, 0) + 15000
+                          `Rp ${carts
+                            .map((item) => item.totalPrice)
+                            .reduce((a, b) => a + b, 0) + 15000
                           }`
                         )}
                       </div>
@@ -738,7 +736,7 @@ function Checkout() {
             }
             .border-md {
               padding: 10px 0px;
-              background-color: #db3022;
+              background-color: #fff;
             }
           }
         `}

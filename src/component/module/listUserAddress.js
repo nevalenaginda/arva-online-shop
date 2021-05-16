@@ -112,13 +112,13 @@ function listUserAddress({ item, fireEvents }) {
         {`${address.address}, Kota ${address.city}, Pos ${address.postalCode}. [${address.saveAs}]`}
       </p>
       <button
-        className="btn fw-bold text-danger rounded-pill border-danger me-2"
+        className="btn fw-bold text-danger rounded-pill border-danger me-2 btn-custom"
         onClick={() => setToggleModal(true)}
       >
         Change address
       </button>
       <button
-        className="btn btn-danger border-0 rounded-pill fw-bold "
+        className="btn btn-danger border-0 rounded-pill fw-bold btn-custom"
         onClick={(e) => handleDeleteAddress(address.id)}
       >
         Delete Address
@@ -252,17 +252,17 @@ function listUserAddress({ item, fireEvents }) {
               </label>
             </div>
             <div className="col-12 my-2">
-              <div className="d-flex justify-content-end">
+              <div className="d-flex justify-content-center justify-content-md-end">
                 <div>
                   <button
-                    className="btn-danger text-white border-0 rounded-pill px-5 py-2 me-3"
+                    className="btn-danger text-white border-0 rounded-pill px-5 py-2 me-3 btn-custom-modal"
                     type="submit"
                     onClick={formik.handleSubmit}
                   >
                     Save
                   </button>
                   <button
-                    className="border-danger rounded-pill py-2 px-5 bg-transparent text-danger overflow-hidden"
+                    className="border-danger rounded-pill py-2 px-5 bg-transparent text-danger overflow-hidden btn-custom-modal"
                     onClick={() => {
                       setToggleModal(false);
                     }}
@@ -277,6 +277,19 @@ function listUserAddress({ item, fireEvents }) {
       </Modal>
       <style jsx>
         {`
+          @media (max-width: 498px) {
+            .btn-custom {
+              margin-top: 10px;
+              width: 100%;
+            }
+          }
+          @media (max-width: 730px) {
+            .btn-custom-modal {
+              margin-top: 10px;
+              width: 100%;
+            }
+          }
+
           @media (max-width: 576px) {
             .modalPositionAndSizeConfig2 {
               min-height: 80vh;
