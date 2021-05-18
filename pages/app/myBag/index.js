@@ -103,7 +103,7 @@ function index() {
             .post(`${process.env.api}/v1/cart/delete`, data)
             .then((res) => {
               setLoad(true);
-              setDataSelected([]);
+              setCheck([]);
               Swal.fire("Success", res, "success");
             })
             .catch((err) => {
@@ -269,11 +269,10 @@ function index() {
                             style={{ width: "180px" }}
                           >
                             <button
-                              className={`btn btn-grup radius-50 shadow-none  ${
-                                activeBtn === `remove-${index}`
-                                  ? "btn-active"
-                                  : ""
-                              }`}
+                              className={`btn btn-grup radius-50 shadow-none  ${activeBtn === `remove-${index}`
+                                ? "btn-active"
+                                : ""
+                                }`}
                               onClick={(e) => {
                                 handleRemove(item);
                                 setActiveBtn(`remove-${index}`);
@@ -290,9 +289,8 @@ function index() {
                               {item.quantity}
                             </p>
                             <button
-                              className={`btn btn-grup radius-50 text-center shadow-none  ${
-                                activeBtn === `add-${index}` ? "btn-active" : ""
-                              }`}
+                              className={`btn btn-grup radius-50 text-center shadow-none  ${activeBtn === `add-${index}` ? "btn-active" : ""
+                                }`}
                               onClick={(e) => {
                                 handleAdd(item);
                                 setActiveBtn(`add-${index}`);
