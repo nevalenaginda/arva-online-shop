@@ -46,7 +46,7 @@ npm run build
 
 ## Screenshots
   <span>
-	  <img width="415" height="197" src="https://raw.githubusercontent.com/abudzr/arva-online-shop/upload-image/screencapture-localhost-3000-auth-reset-password-2021-05-10-02_13_19.png">
+	  <img width="415"  src="https://raw.githubusercontent.com/abudzr/arva-online-shop/upload-image/screencapture-localhost-3000-auth-reset-password-2021-05-10-02_13_19.png">
 	  <img width="415" src="https://raw.githubusercontent.com/abudzr/arva-online-shop/upload-image/screencapture-localhost-3000-auth-login-2021-05-10-02_04_06.png">
 	  <img width="415" height="234" src="https://raw.githubusercontent.com/abudzr/arva-online-shop/upload-image/screencapture-localhost-3000-auth-reset-password-2021-05-10-02_13_19.png">
 	  <img width="415" src="https://camo.githubusercontent.com/61b70afd18d7be483f61707738b4add3dd66ed135d4eb0bd0e091aa78617e328/68747470733a2f2f692e6962622e636f2f4656544b6b334e2f73637265656e636170747572652d6c6f63616c686f73742d333030302d6170702d323032312d30352d31302d30322d30382d30302d706e672d313336362d333739332e706e67">
