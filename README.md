@@ -7,6 +7,9 @@
   Built with Next Js.
 </p>
 
+## Deskripsi
+ARVA SHOP adalah webiste jual beli online yang menyediakan berbagai macam produk fashion dengan berbagai kategori. Aplikasi ini dikembangkangkan menggunakan NextJs dan ExpressJs bersama tim ARVA, berperan sebagai frontend developer.
+
 
 ## Dependensi
 - [next Js](https://Nextjs.org/)
