@@ -56,7 +56,7 @@ npm run build
   </span>
 
 ## Backend
-* [`BACKEND ARVA SHOP`](https://github.com/therevolt/BE-ARVA-Shop)
+* [`BACKEND ARVA SHOP`](https://github.com/nevalenaginda/BE-ARVA-Shop)
 
 ## Deploy
 * [`WEB ARVA SHOP`](https://arva-online-shop-theta.vercel.app/)
