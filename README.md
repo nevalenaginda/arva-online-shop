@@ -7,6 +7,8 @@
   Built with Next Js.
 </p>
 
+## About
+ARVA SHOP is an online shopping website that provides various features for buyers and sellers of goods, and is also integrated with a payment gateway which makes payments easier and more flexible. Created by the ARVA team and serves as Backend. Built with NextJS, ExpressJS, MySQL, and Sequelize.
 
 ## Dependensi
 - [next Js](https://Nextjs.org/)
@@ -20,39 +22,37 @@
 - [Redux-thunk](https://www.npmjs.com/search?q=redux-thunk)
 
 
-## Setting Project
+## How To Install
 
-- Silahkan buka terminal pada VScode dengan cara tekan tombol
+- Clone
 ```
-CTRL + ` 
-atau
-CTRL + SHIFT + C
+git clone https://github.com/therevolt/arva-online-shop/
 ```
 
-- Kemudian lakukan install npm terlebih dahulu dengan membuat perintah seperti berikut
+- Install Module
 ```
-npm install atau npm i
+npm install
 ```
 
-- Jika sudah, maka untuk menjalankan silahkan ketikan perintah berikut ini
+- Run Project
 ```
 npm run dev
 ```
 
-### Kompilasi dan Produksi
+### Build Project
 ```
 npm run build
 ```
 
 ## Screenshots
   <span>
-	  <img width="400" src="https://raw.githubusercontent.com/abudzr/arva-online-shop/upload-image/screencapture-localhost-3000-auth-register-2021-05-10-02_06_36.png">
-	  <img width="400" src="https://raw.githubusercontent.com/abudzr/arva-online-shop/upload-image/screencapture-localhost-3000-auth-login-2021-05-10-02_04_06.png">
-	  <img width="400"src="https://raw.githubusercontent.com/abudzr/arva-online-shop/upload-image/screencapture-localhost-3000-auth-reset-password-2021-05-10-02_13_19.png">
-	  <img width="400" src="https://camo.githubusercontent.com/61b70afd18d7be483f61707738b4add3dd66ed135d4eb0bd0e091aa78617e328/68747470733a2f2f692e6962622e636f2f4656544b6b334e2f73637265656e636170747572652d6c6f63616c686f73742d333030302d6170702d323032312d30352d31302d30322d30382d30302d706e672d313336362d333739332e706e67">
-	  <img width="415" height="351" src="https://raw.githubusercontent.com/abudzr/arva-online-shop/upload-image/screencapture-localhost-3000-app-category-cap-2021-05-10-02_09_38.png">
-	   <img width="400" src="https://camo.githubusercontent.com/30775f68a150c38af83460e8c5d557dd2dab5eab05c5bdcc1e3389f1493ed6bc/68747470733a2f2f692e6962622e636f2f673337765763662f73637265656e636170747572652d6c6f63616c686f73742d333030302d6170702d70726f647563742d372d323032312d30352d31302d30322d32352d30362d706e672d313336362d323336372e706e67">
-	   <img width="400" src="https://raw.githubusercontent.com/abudzr/arva-online-shop/upload-image/screencapture-localhost-3000-app-searchProduct-2021-05-10-02_10_44.png">
+	  <img width="415" height="197" src="https://github.com/abudzr/arva-online-shop/blob/upload-image/screencapture-localhost-3000-auth-register-2021-05-10-02_06_36.png">
+	  <img width="415" src="https://github.com/abudzr/arva-online-shop/blob/upload-image/screencapture-localhost-3000-auth-login-2021-05-10-02_04_06.png">
+	  <img width="415" height="234" src="https://github.com/abudzr/arva-online-shop/blob/upload-image/screencapture-localhost-3000-auth-reset-password-2021-05-10-02_13_19.png">
+	  <img width="415" src="https://i.ibb.co/FVTKk3N/screencapture-localhost-3000-app-2021-05-10-02-08-00-png-1366-3793.png">
+	  <img width="415" height="351" src="https://github.com/abudzr/arva-online-shop/blob/upload-image/screencapture-localhost-3000-app-category-cap-2021-05-10-02_09_38.png">
+	   <img width="415" src="https://i.ibb.co/g37vWcf/screencapture-localhost-3000-app-product-7-2021-05-10-02-25-06-png-1366-2367.png">
+	   <img width="415" src="https://github.com/abudzr/arva-online-shop/blob/upload-image/screencapture-localhost-3000-app-searchProduct-2021-05-10-02_10_44.png">
   </span>
 
 ## Backend
@@ -100,6 +100,5 @@ npm run build
     </tr>
   </table>
 </center>
-
 
 
