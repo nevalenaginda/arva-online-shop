@@ -26,7 +26,7 @@ ARVA SHOP is an online shopping website that provides various features for buyer
 
 - Clone
 ```
-git clone https://github.com/therevolt/arva-online-shop/
+git clone https://github.com/abudzr/arva-online-shop.git
 ```
 
 - Install Module
@@ -56,7 +56,7 @@ npm run build
   </span>
 
 ## Backend
-* [`BACKEND ARVA SHOP`](https://github.com/therevolt/BE-ARVA-Shop)
+* [`BACKEND ARVA SHOP`](https://github.com/abudzr/BE-ARVA-Shop)
 
 ## Deploy
 * [`WEB ARVA SHOP`](https://arva-online-shop-theta.vercel.app/)
